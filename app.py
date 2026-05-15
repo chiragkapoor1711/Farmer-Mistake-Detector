@@ -59,12 +59,17 @@ html, body, [class*="css"] { font-family: var(--font); color: var(--text); }
 #MainMenu { visibility: hidden; }
 footer    { visibility: hidden; }
 header    { visibility: hidden; }
-
-/* ── SIDEBAR TOGGLE ALWAYS VISIBLE ── */
 [data-testid="collapsedControl"] {
     visibility: visible !important;
     display: flex !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    z-index: 999999 !important;
+    position: fixed !important;
+    top: 0.5rem !important;
+    left: 0.5rem !important;
 }
+
 
 /* ── SIDEBAR ── */
 [data-testid="stSidebar"] {
