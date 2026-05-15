@@ -58,18 +58,17 @@ html, body, [class*="css"] { font-family: var(--font); color: var(--text); }
 /* ── HIDE STREAMLIT CHROME ── */
 #MainMenu { visibility: hidden; }
 footer    { visibility: hidden; }
-header    { visibility: hidden; }
+/* header hide nahi — sidebar toggle button iske andar hota hai */
+header { background: transparent !important; }
+header toolbar { visibility: hidden; }
+/* Sidebar toggle — hamesha visible rehega */
 [data-testid="collapsedControl"] {
     visibility: visible !important;
     display: flex !important;
     opacity: 1 !important;
     pointer-events: auto !important;
     z-index: 999999 !important;
-    position: fixed !important;
-    top: 0.5rem !important;
-    left: 0.5rem !important;
 }
-
 
 /* ── SIDEBAR ── */
 [data-testid="stSidebar"] {
@@ -170,9 +169,6 @@ header    { visibility: hidden; }
 .metric-value.danger  { color: var(--red);    text-shadow: 0 0 18px rgba(239,71,111,0.35); }
 .metric-value.warning { color: var(--yellow); text-shadow: 0 0 18px rgba(255,209,102,0.3); }
 .metric-value.safe    { color: var(--mint);   text-shadow: 0 0 18px rgba(6,214,160,0.3); }
-
-
-
 
 /* ── RISK CARDS ── */
 .risk-card {
@@ -470,19 +466,26 @@ def get_crop_comparison(state, rainfall):
 st.sidebar.title("🌾 Filters")
 st.sidebar.markdown("---")
 
-state    = st.sidebar.selectbox("📍 State",    sorted(data_df["State_Name"].unique()))
-district_opts = sorted(data_df[data_df["State_Name"] == state]["District_Name"].unique())
-district = st.sidebar.selectbox("🏘️ District", district_opts)
+state = st.sidebar.selectbox("📍 State", sorted(data_df["State_Name"].unique()))
 
-filtered_df = data_df[
-    (data_df["State_Name"]    == state) &
-    (data_df["District_Name"] == district)
-].copy()
+HAS_DISTRICT = "District_Name" in data_df.columns
+
+if HAS_DISTRICT:
+    district_opts = sorted(data_df[data_df["State_Name"] == state]["District_Name"].unique())
+    district      = st.sidebar.selectbox("🏘️ District", district_opts)
+    filtered_df   = data_df[
+        (data_df["State_Name"]    == state) &
+        (data_df["District_Name"] == district)
+    ].copy()
+else:
+    district    = None
+    filtered_df = data_df[data_df["State_Name"] == state].copy()
 
 st.sidebar.markdown("---")
 st.sidebar.markdown(f"**Filtered records:** `{len(filtered_df)}`")
 st.sidebar.markdown(f"**State:** `{state}`")
-st.sidebar.markdown(f"**District:** `{district}`")
+if HAS_DISTRICT:
+    st.sidebar.markdown(f"**District:** `{district}`")
 
 
 # ═══════════════════════════════════════
@@ -806,7 +809,7 @@ with tab_eda:
     st.caption("Basic data distribution and structure — no predictions, just understanding the data.")
 
     if len(filtered_df) == 0:
-        st.warning("No data available for the selected State/District.")
+        st.warning("No data available for the selected State/District combination.")
     else:
         col1, col2 = st.columns(2)
 
@@ -1083,14 +1086,16 @@ with tab_ai:
         st_avg  = data_df[data_df["State_Name"] == state]["Yield"].mean()
         nat_avg = data_df["Yield"].mean()
 
+        area_label = district if (HAS_DISTRICT and district) else state
+
         if avg_y < st_avg:
             insights.append({"type": "warning", "icon": "📉",
-                "msg": f"Yield in **{district}** ({avg_y:.1f} kg/ha) is **below** the state average "
+                "msg": f"Yield in **{area_label}** ({avg_y:.1f} kg/ha) is **below** the state average "
                        f"({st_avg:.1f} kg/ha). Gap = {st_avg - avg_y:.1f} kg/ha. "
                        f"Study high-performing districts in {state}."})
         else:
             insights.append({"type": "success", "icon": "📈",
-                "msg": f"Yield in **{district}** ({avg_y:.1f} kg/ha) is **above** the state average "
+                "msg": f"Yield in **{area_label}** ({avg_y:.1f} kg/ha) is **above** the state average "
                        f"({st_avg:.1f} kg/ha) and "
                        f"{'also above' if avg_y > nat_avg else 'below'} national average ({nat_avg:.1f} kg/ha)."})
 
