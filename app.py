@@ -1202,7 +1202,7 @@ st.markdown("---")
 st.markdown(
     '<div class="custom-footer">'
     '⚡ Predictions based on historical agricultural patterns &nbsp;·&nbsp; India 1901–2015 &nbsp;·&nbsp; '
-    '🌾 Farmer Mistake Detector'
+    '🌾 Farmer Mistake Detector &nbsp;·&nbsp; Made by Chirag Kapoor'
     '</div>',
     unsafe_allow_html=True
 )
