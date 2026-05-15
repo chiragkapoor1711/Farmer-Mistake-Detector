@@ -160,6 +160,13 @@ header    { visibility: hidden; }
 .metric-value.warning { color: var(--yellow); text-shadow: 0 0 18px rgba(255,209,102,0.3); }
 .metric-value.safe    { color: var(--mint);   text-shadow: 0 0 18px rgba(6,214,160,0.3); }
 
+
+/* Sidebar toggle button always visible */
+[data-testid="collapsedControl"] {
+    display: block !important;
+    visibility: visible !important;
+}
+
 /* ── RISK CARDS ── */
 .risk-card {
     border-radius: 12px;
