@@ -60,6 +60,12 @@ html, body, [class*="css"] { font-family: var(--font); color: var(--text); }
 footer    { visibility: hidden; }
 header    { visibility: hidden; }
 
+/* ── SIDEBAR TOGGLE ALWAYS VISIBLE ── */
+[data-testid="collapsedControl"] {
+    visibility: visible !important;
+    display: flex !important;
+}
+
 /* ── SIDEBAR ── */
 [data-testid="stSidebar"] {
     background: var(--bg-card) !important;
@@ -161,11 +167,7 @@ header    { visibility: hidden; }
 .metric-value.safe    { color: var(--mint);   text-shadow: 0 0 18px rgba(6,214,160,0.3); }
 
 
-/* Sidebar toggle button always visible */
-[data-testid="collapsedControl"] {
-    display: block !important;
-    visibility: visible !important;
-}
+
 
 /* ── RISK CARDS ── */
 .risk-card {
